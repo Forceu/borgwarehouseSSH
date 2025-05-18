@@ -78,7 +78,7 @@ func main() {
 			if !ok {
 				return false
 			}
-			
+
 			user, ok := getUserByName(context.User(), true)
 			if !ok {
 				// No user found with name provided
@@ -119,6 +119,16 @@ func main() {
 	)
 	if err != nil {
 		log.Error("Could not start server", "error", err)
+	}
+
+	if !loadUsers() {
+		fmt.Println("Could not find any users in the file /home/borgwarehouse/.ssh/authorized_keys")
+	} else {
+		fmt.Println("Debug - Allowing the following users:")
+		fmt.Println("")
+		for _, user := range allowedUsers {
+			fmt.Printf("- %s (%s) with public key %s\n", user.Name, user.Repo, user.PublicKey)
+		}
 	}
 
 	done := make(chan os.Signal, 1)
